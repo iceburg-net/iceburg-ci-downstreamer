@@ -29,13 +29,13 @@ log "Age of iCEBURG CI repository: ${last_update}s (max age is ${ICEBURG_CI_MAX_
   git remote update 2>&1 | sed "s/^/#    /g"
 )
 
-ICEBURG_CI_ROOT="$(mktemp -d "$ICEBURG_CI_HOME/workspace-XXXXXXX")"
-$ICEBURG_CI_SKIP_CLEANUP || trap 'log "cleaning up. ICEBURG_CI_SKIP_CLEANUP=true to skip."; rm -rf "$ICEBURG_CI_ROOT"' EXIT
+PIPELINE_HOME="$(mktemp -d "$ICEBURG_CI_HOME/workspace-XXXXX")"
+$ICEBURG_CI_SKIP_CLEANUP || trap 'log "cleaning up. ICEBURG_CI_SKIP_CLEANUP=true to skip."; rm -rf "$PIPELINE_HOME"' EXIT
 
-log "Creating workspace: $ICEBURG_CI_ROOT"
-git clone -q "$mirror" "$ICEBURG_CI_ROOT" 2>&1 | sed "s/^/#    /g"
+log "Creating workspace: $PIPELINE_HOME"
+git clone -q "$mirror" "$PIPELINE_HOME" 2>&1 | sed "s/^/#    /g"
 
 # ci handoff...
-cd "$ICEBURG_CI_ROOT"
+cd "$PIPELINE_HOME"
 [ -z "$ICEBURG_CI_BRANCH" ] || git checkout "$ICEBURG_CI_BRANCH" || die "ICEBURG_CI_BRANCH checkout failed"
 bin/iceburg-ci "$@"
