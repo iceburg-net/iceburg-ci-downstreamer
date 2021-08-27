@@ -2,19 +2,19 @@
 
 :gift: an always-updating frontend into iCEBURG CI, aka the "entrypoint installer".
 
-upon execution
-the downstreamer creates a unique thread safe workspace containing an updated copy of the [iCEBURG CI](https://github.com/iceburg-net/iceburg-ci) tooling and acts
-as a frontend into it by passing off execution.
+the downstreamer provides a thread safe workspace containing an updated checkout of [iCEBURG CI](https://github.com/iceburg-net/iceburg-ci) and passes of execution to it.
 
-it can be added to your project repositories or installed as a system-wide tool.
+it can be added to individual project repositories or installed as a system-wide tool.
 
-## quickstart
+## project setup
 
-As a pre-requisite, your project is expected to follow [iCEBURG CI](https://github.com/iceburg-net/iceburg-ci) conventions -- at minimum it should provide a `ci/docker-compose.yml` file definining step behavior.
+Your project is expected to follow [iCEBURG CI](https://github.com/iceburg-net/iceburg-ci) conventions -- at minimum it must;
+ * provide the "bin/ci" tooling for running steps, either locally in the project, or as a system tool.
+ * provide a `ci/docker-compose.yml` file defining step behavior. See iCEBURG CI [TBD examples]().
 
 ### including in a project
 
-Include the [bin/ci](bin/ci) file in your repository, making sure it is marked as **executable**. this method requires no preinstallation on developer machines.
+Include the [bin/ci](bin/ci) file in your repository, making sure it is marked as **executable**. this method requires no preinstallation on developer machines and offers visibility into what is executed.
 
 ```
 $your-project$
@@ -26,7 +26,7 @@ curl https://raw.githubusercontent.com/iceburg-net/iceburg-ci-downstreamer/main/
 
 > You may use a path other than `bin/ci`, just make sure the script properly detects PROJECT_ROOT (top level of your repository). the scrippt currently expects the project root  to be one directory up from its location. If your project is managed by git, you can use `PROJECT_ROOT="$(git rev-parse --show-toplevel)"`.
 
-Once added, simply run `bin/ci` from within your project to kickoff CI step execution.
+:rocket: Once added, simply run `bin/ci` from within your project to kickoff CI step execution.
 
 
 ### as a system tool
@@ -39,9 +39,12 @@ sudo curl https://raw.githubusercontent.com/iceburg-net/iceburg-ci-downstreamer/
 
 ```
 
-Once added, simply run `iceburg-ci` from within your project to kickoff CI step execution.
+:rocket: nce added, simply run `iceburg-ci` from within any directory of your project to kickoff CI step execution.
 
 ## environment variables
+
+environment variables are used to customize downstreamer behavior, such as where workspaces are created or the repository used for cloning a private/custom version of iCEBURG CI.
+
 
 name | default | description
 --- | --- | ---
@@ -51,3 +54,33 @@ ICEBURG_CI_HOME | ~/.iceburg-ci | home for CI tooling workspaces.
 ICEBURG_CI_MAX_AGE | 60 | Number of seconds allowed before checking for updates.
 ICEBURG_CI_SKIP_CLEANUP | false | True to skip cleaning up workspaces and tmp files.
 ICEBURG_CI_URL | https://github.com/iceburg-net/iceburg-ci.git | URL of shared iceburg-ci repository. Can be a path.
+
+
+### self hosted iceburg CI
+
+it may be preferable to host your own downstreamer and iCEBURG CI repository for your organization. this will allow you to share custom steps and tooling with your projects in a safe way.  
+
+you are able to control to control which repositories are used with the `ICEBURG_CI_DOWNSTREAMER_URL` and `ICEBURG_CI_URL` variables. you can hardcode values by modifying the downstreamer script or provide them via the environment on CI platforms and developer machines accordingly.
+
+
+#### GitHub Actions
+
+The [iCEBURG CI action (TBD)]() for configuring the environment supports setting the CI repositories used via the `TBD` parameters;
+
+#### GitLab CI
+
+The `CI_BUILD_TOKEN` can be leveraged for cloning repositories as the executing user in GitLab. If your iCEBURG CI fork is named `ci/acme-ci.git`, A relatively portable approach is to set `ICEBURG_CI_URL` as a CI variable:
+
+name | value
+--- | ---
+ICEBURG_CI_URL | $CI_SERVER_PROTOCOL://gitlab-ci-token:$CI_BUILD_TOKEN@$CI_SERVER_HOST:$CI_SERVER_PORT/ci/acme-ci.git
+
+or inside a pipeline template;
+
+```yml
+
+variables:
+  ICEBURG_CI_URL: $CI_SERVER_PROTOCOL://gitlab-ci-token:$CI_BUILD_TOKEN@$CI_SERVER_HOST:$CI_SERVER_PORT/ci/acme-ci.git
+  ...
+
+```
