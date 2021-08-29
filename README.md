@@ -24,7 +24,7 @@ curl https://raw.githubusercontent.com/iceburg-net/iceburg-ci-downstreamer/main/
 
 ```
 
-> You may use a path other than `bin/ci`, just make sure the script properly detects PROJECT_ROOT (top level of your repository). the scrippt currently expects the project root  to be one directory up from its location. If your project is managed by git, you can use `PROJECT_ROOT="$(git rev-parse --show-toplevel)"`.
+> You may use a path other than `bin/ci`, just make sure the script properly detects PROJECT_HOME (top level of your repository). the scrippt currently expects the project root  to be one directory up from its location. If your project is managed by git, you can use `PROJECT_HOME="$(git rev-parse --show-toplevel)"`.
 
 :rocket: Once added, simply run `bin/ci` from within your project to kickoff CI step execution.
 

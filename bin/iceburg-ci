@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eo pipefail
-PROJECT_ROOT="$( git rev-parse --show-toplevel )"
-export PROJECT_ROOT ICEBURG_CI_HOME="${ICEBURG_CI_HOME:-$HOME/.iceburg-ci}"
+PROJECT_HOME="$( git rev-parse --show-toplevel )"
+export PROJECT_HOME ICEBURG_CI_HOME="${ICEBURG_CI_HOME:-$HOME/.iceburg-ci}"
 [ -d "$ICEBURG_CI_HOME/iceburg-ci-downstreamer" ] || {
   echo "# $0: missing iceburg-ci-downstreamer. intalling now..." >&2
   git clone "${ICEBURG_CI_DOWNSTREAMER_URL:-https://github.com/iceburg-net/iceburg-ci-downstreamer.git}" "$ICEBURG_CI_HOME/iceburg-ci-downstreamer" 2>&1 | sed "s/^/#    /g"
