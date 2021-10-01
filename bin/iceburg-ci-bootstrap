@@ -10,7 +10,7 @@ age() { echo $(( $(date +%s) - $(date -r "$1" +%s) )); }
 [[ "$OSTYPE" =~ darwin|macos* ]] && md5sum='md5 -r' || md5sum="md5sum"
 
 ICEBURG_CI_HOME="${ICEBURG_CI_HOME:-$HOME/.iceburg-ci}"
-ICEBURG_CI_URL="${ICEBURG_CI_URL:-https://github.com/iceburg-net/iceburg-ci.git}"
+ICEBURG_CI_URL="${ICEBURG_CI_URL:-https://github.com/iceburgci/iceburg-ci.git}"
 ICEBURG_CI_MAX_AGE="${ICEBURG_CI_MAX_AGE:-60}"
 ICEBURG_CI_SKIP_CLEANUP=${ICEBURG_CI_SKIP_CLEANUP:-false}
 mirror="$ICEBURG_CI_HOME/mirrors/$($md5sum <<< "$ICEBURG_CI_URL" | awk '{print $1}')"
@@ -18,7 +18,7 @@ mirror="$ICEBURG_CI_HOME/mirrors/$($md5sum <<< "$ICEBURG_CI_URL" | awk '{print $
 log "iCEBURG CI repository: $ICEBURG_CI_URL"
 [ -d "$mirror" ] || {
   log "cloning iCEBURG CI repository..."
-  git clone --bare --mirror "$ICEBURG_CI_URL" "$mirror" 2>&1 | sed "s/^/#    /g"
+  git clone --bare --mirror "$ICEBURG_CI_URL" "$mirror" 2>&1 | sed "s/^/#    /g" >&2
 }
 
 last_update="$(age "$mirror/objects")"
@@ -26,16 +26,16 @@ log "Age of iCEBURG CI repository: ${last_update}s (max age is ${ICEBURG_CI_MAX_
 [ "$last_update" -lt "$ICEBURG_CI_MAX_AGE" ] || (
   log "Updating iCEBURG CI repository..."
   cd "$mirror"
-  git remote update 2>&1 | sed "s/^/#    /g"
+  git remote update 2>&1 | sed "s/^/#    /g" >&2
 )
 
-PIPELINE_HOME="$(mktemp -d "$ICEBURG_CI_HOME/workspace-XXXXX")"
+PIPELINE_HOME="$(mktemp -d "$ICEBURG_CI_HOME/workspace-XXXXXXX")"
 $ICEBURG_CI_SKIP_CLEANUP || trap 'log "cleaning up. ICEBURG_CI_SKIP_CLEANUP=true to skip."; rm -rf "$PIPELINE_HOME"' EXIT
 
 log "Creating workspace: $PIPELINE_HOME"
-git clone -q "$mirror" "$PIPELINE_HOME" 2>&1 | sed "s/^/#    /g"
+git clone -q "$mirror" "$PIPELINE_HOME" 2>&1 | sed "s/^/#    /g" >&2
 
 # ci handoff...
 cd "$PIPELINE_HOME"
-[ -z "$ICEBURG_CI_BRANCH" ] || git checkout "$ICEBURG_CI_BRANCH" || die "ICEBURG_CI_BRANCH checkout failed"
+[ -z "$ICEBURG_CI_BRANCH" ] || git checkout "$ICEBURG_CI_BRANCH" >&2 || die "ICEBURG_CI_BRANCH checkout failed"
 bin/iceburg-ci "$@"

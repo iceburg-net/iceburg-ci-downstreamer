@@ -2,13 +2,13 @@
 
 :gift: an always-updating frontend into iCEBURG CI, aka the "entrypoint installer".
 
-the downstreamer provides a thread safe workspace containing an updated checkout of [iCEBURG CI](https://github.com/iceburg-net/iceburg-ci) and passes of execution to it.
+the downstreamer provides a thread safe workspace containing an updated checkout of [iCEBURG CI](https://github.com/iceburgci/iceburg-ci) and passes of execution to it.
 
 it can be added to individual project repositories or installed as a system-wide tool.
 
 ## project setup
 
-Your project is expected to follow [iCEBURG CI](https://github.com/iceburg-net/iceburg-ci) conventions -- at minimum it must;
+Your project is expected to follow [iCEBURG CI](https://github.com/iceburgci/iceburg-ci) conventions -- at minimum it must;
  * provide the "bin/ci" tooling for running steps, either locally in the project, or as a system tool.
  * provide a `ci/docker-compose.yml` file defining step behavior. See iCEBURG CI [TBD examples]().
 
@@ -19,7 +19,7 @@ Include the [bin/ci](bin/ci) file in your repository, making sure it is marked a
 ```
 $your-project$
 mkdir -p bin
-curl https://raw.githubusercontent.com/iceburg-net/iceburg-ci-downstreamer/main/bin/ci > \
+curl https://raw.githubusercontent.com/iceburgci/iceburg-ci-downstreamer/main/bin/ci > \
  bin/ci && chmod +x bin/ci
 
 ```
@@ -34,7 +34,7 @@ curl https://raw.githubusercontent.com/iceburg-net/iceburg-ci-downstreamer/main/
 Add [bin/iceburg-ci](bin/iceburg-ci) to a directory in your PATH, making sure it is marked as **executable**. this method assumes projects are `git` managed.
 
 ```
-sudo curl https://raw.githubusercontent.com/iceburg-net/iceburg-ci-downstreamer/main/bin/iceburg-ci > \
+sudo curl https://raw.githubusercontent.com/iceburgci/iceburg-ci-downstreamer/main/bin/iceburg-ci > \
  /usr/local/bin/iceburg-ci && sudo chmod +x /usr/local/bin/iceburg-ci
 
 ```
@@ -49,11 +49,11 @@ environment variables are used to customize downstreamer behavior, such as where
 name | default | description
 --- | --- | ---
 ICEBURG_CI_BRANCH | ~empty | The branch of the iceburg-ci repository to use for the workspace. if empty, the default branch is used.
-ICEBURG_CI_DOWNSTREAMER_URL | https://github.com/iceburg-net/iceburg-ci-downstreamer.git | URL of the iceburg-ci-downstreamer repository. Can be a path.
+ICEBURG_CI_DOWNSTREAMER_URL | https://github.com/iceburgci/iceburg-ci-downstreamer.git | URL of the iceburg-ci-downstreamer repository. Can be a path.
 ICEBURG_CI_HOME | ~/.iceburg-ci | home for CI tooling workspaces.
 ICEBURG_CI_MAX_AGE | 60 | Number of seconds allowed before checking for updates.
 ICEBURG_CI_SKIP_CLEANUP | false | True to skip cleaning up workspaces and tmp files.
-ICEBURG_CI_URL | https://github.com/iceburg-net/iceburg-ci.git | URL of shared iceburg-ci repository. Can be a path.
+ICEBURG_CI_URL | https://github.com/iceburgci/iceburg-ci.git | URL of shared iceburg-ci repository. Can be a path.
 
 
 ### self hosted iceburg CI
